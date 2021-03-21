@@ -1,0 +1,452 @@
+@media (min-width: 768px) and (max-width: 1191px) {
+  .single-dance-data .txt .read-more a {
+    font-size: 13px;
+    padding: 7px 15px;
+  }
+  .c-profile-data .img-data .img {
+    width: 140px;
+    height: 150px;
+  }
+  .c-profile-data .img-data .data {
+    margin-left: 160px;
+  }
+  .sub-tabs .head-tabs ul li a {
+    padding: 8px 20px;
+  }
+  .lr-page .login-img {
+    display: none;
+  }
+  .lr-page .login-input-form {
+    margin: 0 auto;
+  }
+  .lr-page .form {
+    margin: 50px 0 20px;
+  }
+  .lessons-cost-page .left-box {
+    padding: 15px;
+  }
+  .same-box-design {
+    padding: 10px;
+  }
+}
+@media (min-width: 768px) and (max-width: 992px) {
+  footer .m-top {
+    margin-top: 20px;
+  }
+  footer .support-social {
+    display: flex;
+    align-items: flex-start;
+    margin: 0 -50px;
+  }
+  footer .support-social .single-footer {
+    padding: 0 50px;
+  }
+  footer .single-footer.social-links {
+    margin-top: 0;
+  }
+  .user-account .account-card {
+    padding: 20px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hidden-sm {
+    display: none;
+  }
+  .section-padding {
+    padding: 30px 0;
+  }
+  .btn1 {
+    padding: 7px 18px;
+    font-size: 13px;
+  }
+  /**header**/
+  header .toggle-menu {
+    display: inline-block;
+    transition: all 0.3s;
+  }
+  header nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    background: #060418;
+    height: 100%;
+    z-index: 99;
+    padding: 20px;
+    display: none;
+  }
+  header nav ul {
+    margin: 60px 0 0;
+    padding: 20px 0 0;
+    display: block;
+    border-top: 1px solid #011f38;
+  }
+  header nav ul li {
+    display: block;
+    padding: 10px 0;
+  }
+  header nav ul li a {
+    font-size: 18px;
+    padding: 0;
+  }
+  header .logo img {
+    width: 170px;
+  }
+  header nav ul li .signin {
+    margin: 0;
+  }
+  nav .m-logo {
+    display: inline-block;
+  }
+  header nav ul li a span {
+    margin: 0;
+  }
+  header nav ul li a .my-profile {
+    display: none;
+  }
+  /*****footer****/
+  footer .footer {
+    padding: 30px 0;
+  }
+  footer .single-footer .logo {
+    margin: 0 0 10px;
+  }
+  footer .footer .single-footer {
+    margin: 0 0 15px;
+  }
+  footer .single-footer ul li {
+    list-style: none;
+    padding: 0 5px 5px;
+    display: inline-block;
+  }
+  footer .single-footer ul li:after {
+    content: "|";
+    padding-left: 10px;
+    color: #565656;
+  }
+  footer .single-footer ul li:last-child:after {
+    content: "";
+    padding: 0;
+  }
+  footer .single-footer h2 {
+    font-size: 14px;
+  }
+  footer .single-footer p {
+    font-size: 13px;
+  }
+  footer .single-footer.links1 ul li a:before {
+    content: "";
+    padding: 0;
+  }
+  footer .logo-txt {
+    text-align: center;
+    margin: 0 0 20px;
+  }
+  footer .footer .logo-txt img {
+    width: 120px;
+  }
+  /****home slider****/
+  .home-slider .text-searchbar .txt h2 {
+    font-size: 22px;
+  }
+  .home-slider .owl-carousel .owl-nav.disabled {
+    bottom: 100px;
+  }
+  .home-slider .text-searchbar .searchbar .inner .btn1 {
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 13px;
+  }
+  .home-slider .text-searchbar .searchbar input {
+    padding: 0 100px 0 5px;
+  }
+  .heading h2 {
+    font-size: 18px;
+  }
+  .category-slider .owl-carousel .owl-nav.disabled button.owl-next,
+  .category-slider .owl-carousel .owl-nav.disabled button.owl-prev {
+    display: none;
+  }
+  .latest-data-section .latest-data-slider,
+  .latest-data-section .latest-data-slider2 {
+    padding: 0 0;
+  }
+  .latest-data-section .owl-carousel .owl-nav.disabled button.owl-prev {
+    left: -20px;
+  }
+  .latest-data-section .owl-carousel .owl-nav.disabled button.owl-next {
+    right: -20px;
+  }
+  .same-txt h2 {
+    font-size: 18px;
+  }
+  .same-txt p {
+    font-size: 13px;
+  }
+  .category-slider .single-category .img {
+    width: 80px;
+    height: 80px;
+  }
+  .category-slider .single-category h2 {
+    font-size: 13px;
+  }
+  .home-slider .text-searchbar {
+    position: absolute;
+    right: 0;
+    top: initial;
+    bottom: 200px;
+    transform: unset;
+    z-index: 1;
+    width: 100%;
+  }
+  /*******dance-category*******/
+  .search-section .text-searchbar .txt h2 {
+    font-size: 20px;
+  }
+  .search-section .text-searchbar .searchbar input {
+    height: 32px;
+  }
+  .search-section .text-searchbar .searchbar input {
+    padding: 0 70px 0 5px;
+  }
+  .single-dance-data .txt .read-more a {
+    font-size: 14px;
+  }
+  .get-started-step1 .logo-txt h2 {
+    font-size: 18px;
+    line-height: 22px;
+    margin: 0 0 10px;
+  }
+  .get-started-step1 .logo-txt p {
+    font-size: 14px;
+  }
+  .get-started h2 {
+    font-size: 18px;
+    line-height: 22px;
+    margin: 0 0 10px;
+  }
+  .get-started .logo-txt {
+    padding: 40px 0 15px;
+  }
+  .dance-location-links .locatiobs-links {
+    margin: 0;
+  }
+  .dance-location-links .locatiobs-links ul {
+    margin: 0;
+  }
+  .dance-location-links .locatiobs-links ul li {
+    font-size: 15px;
+  }
+  .dance-location-links .locatiobs-links ul {
+    -webkit-column-count: 3;
+    -moz-column-count: 3;
+    column-count: 3;
+  }
+  .faq-section .single-faq h2 {
+    font-size: 17px;
+    margin: 0 0 10px;
+  }
+  .faq-section .single-faq h4 {
+    font-size: 14px;
+  }
+
+  /*****coach profile******/
+  .c-profile-data .img-data .img {
+    width: 170px;
+    height: 170px;
+    float: unset;
+  }
+  .c-profile-data .img-data .data {
+    margin-left: 0;
+  }
+  .c-profile-data .img-data .data h2 {
+    font-size: 18px;
+  }
+  .c-profile-data .img-data .data .custom-star-ratting ul li {
+    font-size: 12px;
+    padding: 0;
+  }
+  .c-profile-data .img-data .data .experince {
+    font-size: 13px;
+  }
+  .c-profile-data .img-data .data .buttons button {
+    padding: 5px 10px;
+    font-size: 13px;
+    border-radius: 5px;
+    margin: 0 5px 10px;
+  }
+  .c-profile-data .img-data {
+    margin: 0 0 10px;
+  }
+  .reviews-box .review-body .single-review {
+    padding: 10px;
+  }
+  .reviews-box .review-body .single-review h2 {
+    font-size: 15px;
+  }
+  .reviews-box .review-body .single-review p {
+    font-size: 13px;
+  }
+  .coach-profile .c-profile {
+    margin: 0 0 20px;
+  }
+
+  /******profile******/
+  .profile-tabs {
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 30px;
+  }
+  .profile-tabs ul li {
+    display: inline-block;
+    border-radius: 30px;
+    overflow: hidden;
+    margin: 0 5px;
+  }
+  .profile-tabs ul {
+    white-space: nowrap;
+    overflow: auto;
+    margin: 0 -5px;
+  }
+  .profile-tabs ul li a {
+    font-size: 13px;
+    padding: 10px;
+  }
+  .profile-tabs ul li a i {
+    width: auto;
+    font-size: 14px;
+    margin-right: 2px;
+  }
+  .my-account .c-profile-data .img-data .img {
+    width: 130px;
+    height: 130px;
+  }
+  .my-account .coach-profile .c-profile {
+    margin: 0 0 15px;
+    padding: 0 0 15px;
+  }
+  .custom-p-card .c-header h2 {
+    font-size: 17px;
+  }
+  .custom-p-card .c-header p {
+    font-size: 13px;
+  }
+  .profile-data .tab-data .body {
+    padding: 15px;
+  }
+  .sub-tabs .head-tabs ul li a {
+    padding: 5px 15px;
+    font-size: 14px;
+  }
+  .sub-tabs .head-tabs ul li {
+    padding: 0 5px;
+  }
+  .sub-tabs .head-tabs ul {
+    margin: 0 -5px;
+    white-space: nowrap;
+    overflow: auto;
+  }
+  .inbox .single-list {
+    padding: 10px;
+  }
+  .inbox .single-list .txt {
+    margin-left: 50px;
+  }
+  .jobs .single-job h2 {
+    font-size: 16px;
+  }
+  .jobs .single-job p {
+    font-size: 13px;
+  }
+  .jobs ul li {
+    margin: 0 0 15px;
+    padding: 0 0 15px;
+  }
+  /*****login*********/
+  .lr-page .login-img {
+    display: none;
+  }
+  .lr-page .form {
+    padding: 20px;
+    margin: 50px 0 20px;
+  }
+  .lr-page .link p {
+    font-size: 15px;
+  }
+  .lr-page .txt h2 {
+    font-size: 18px;
+  }
+  .lr-page .form {
+    margin: 0 auto 20px;
+  }
+  .join-page .lr-form {
+    margin: 0 auto;
+  }
+  .lr-page .heading h2 {
+    font-size: 18px;
+  }
+  /******.search-section****/
+  .lessons-cost-page .left-box {
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    background: #fafafa;
+  }
+  .lessons-cost-page .left-box h1 {
+    font-size: 18px;
+    margin: 0 0 15px;
+  }
+  .table-content h2 {
+    font-size: 16px;
+  }
+  .same-box-design {
+    padding: 10px;
+  }
+  /********gigs details********/
+  .gigs-details .c-profile-data .img-data .img {
+    height: 150px;
+    max-width: 150px;
+  }
+
+  /*************/
+  .join-us-strip ul li {
+    padding: 5px 5px;
+    font-size: 14px;
+  }
+  .join-us-strip ul li:after {
+    content: "|";
+    margin-left: 10px;
+    color: #adadad;
+  }
+  .same-txt a {
+    padding: 7px 20px;
+    font-size: 15px;
+  }
+
+  .user-account .account-card {
+    padding: 15px;
+  }
+  .user-account h1.head {
+    margin: 0 0 15px;
+    padding: 0 0 10px;
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  footer .single-footer ul li a {
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 476px) {
+  .custom-pagination button {
+    display: none;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 768px) {
+}
