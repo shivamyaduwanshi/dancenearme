@@ -21,7 +21,7 @@
      Route::get('/', 'HomeController@index')->name('index');
      Route::get('/coach-profile/{id}/{name}', 'HomeController@coachProfile')->name('coach-profile');
      Route::get('/dance-category', 'HomeController@danceCategory')->name('dance-category');
-     Route::get('/gigs-details/{id}', 'HomeController@gigsDetails')->name('gigs-details');
+     Route::get('/gigs-details/{id}/{title}', 'HomeController@gigsDetails')->name('gigs-details');
      Route::get('/join', 'HomeController@join')->name('join');
      Route::get('/lesson-cost', 'HomeController@lessionCost')->name('lessons-cost');
      Route::get('/services', 'HomeController@services')->name('services');
@@ -68,5 +68,20 @@
 
      Route::post('/add/service','HomeController@addService')->name('addService');
      Route::post('/remove/service','HomeController@removeService')->name('removeService');
+
+     Route::get('/buy/credit/points','HomeController@buyCreditPoints')->name('buyCreditPoints');
+     Route::post('/checkout','HomeController@checkout')->name('checkout');
+     Route::get('/payment/success','HomeController@paymentSuccess')->name('paymentSuccess');
+     Route::get('/payment/failed','HomeController@paymentFailed')->name('paymentFailed');
+     Route::get('/success','HomeController@success')->name('success');
+     Route::get('/failed','HomeController@failed')->name('failed');
+
+     Route::post('/cance/job','HomeController@cancelJob')->name('cancelJob');
+     Route::post('/accept/job','HomeController@acceptJob')->name('acceptJob');
+     Route::post('/complete/job','HomeController@completeJob')->name('completeJob');
+
+     Route::post('/paywith/card','HomeController@paywithCard')->name('paywithCard');
+
+
 
 ?>

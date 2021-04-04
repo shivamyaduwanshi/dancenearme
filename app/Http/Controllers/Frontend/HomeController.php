@@ -7,17 +7,24 @@ use Illuminate\Http\Request;
 use Session;
 use App\Models\Category;
 use App\Models\UserPortfolio;
+use Srmklive\PayPal\Services\PayPal as PayPalClient;
 use App\Models\UserSocialLink;
 use App\Models\TeacherService;
 use App\Models\UserDance;
 use App\Models\Service;
 use App\Models\UserFaq;
+use App\Models\Job;
 use App\User;
 use App\Models\Gig;
 use App\Models\Rating;
 use DB;
 use Auth;
 use Hash;
+use PayPal\Api\Amount;
+use PayPal\Api\Details;
+use PayPal\Api\Payment;
+use PayPal\Api\PaymentExecution;
+use PayPal\Api\Transaction;
 
 class HomeController extends Controller
 {
@@ -38,6 +45,7 @@ class HomeController extends Controller
 
     public function index()
     {
+        $data['services']   = Service::orderBy('title','asc')->get();
         $data['categories'] = Category::orderBy('title','asc')->get();
         $data['dancers']    = User::where('role_id','2')->where('is_featured','1')->orderBy('id','desc')->get();
         $data['gigs']       = Gig::whereNull('deleted_at')->orderBy('id','desc')->get();
@@ -46,11 +54,13 @@ class HomeController extends Controller
 
     public function coachProfile($id){
         $user      = User::find($id);
-        $reviews   = Rating::where('teacher_id',$id)->get();
+        $reviews   = Rating::select('rating_reviews.*')->join('jobs','rating_reviews.job_id','=','jobs.id')->where('jobs.dancer_id',auth::id())->get();
         $faqs      = $user->userfaq;
         $services  = $user->userServices;
         $dances    = $user->userDances;
-        return view('frontend.coach-profile',compact('user','reviews','faqs','services','dances'));
+        $gigs      = Gig::where('user_id',$id)->where('id','desc')->get();
+        $gigs      = Gig::all();
+        return view('frontend.coach-profile',compact('user','reviews','faqs','services','dances','gigs'));
     }
 
     public function danceCategory(Request $request){
@@ -79,8 +89,10 @@ class HomeController extends Controller
         return view('frontend.dancers',compact('dancers'));
     }
 
-    public function gigsDetails(){
-        return view('frontend.gigs-details');
+    public function gigsDetails($id,$title){
+        $gig  = Gig::find($id);
+        $gigs = Gig::where('id','desc')->get();
+        return view('frontend.gigs-details',compact('gig','gigs'));
     }
 
     public function lessionCost(){
@@ -191,7 +203,10 @@ class HomeController extends Controller
             'password' => \Hash::make($request->password),
             'zip_code' => Session::get('zip_code'),
             'travel_distance' => Session::get('travel_distance'),
-            'role_id'         =>'2'
+            'role_id'         =>'2',
+            'lat'             => $request->lat ?? null,
+            'lng'             => $request->lng ?? null,
+            'address'         => $request->addresss ?? null
         ];
         $userDances = array();
         $userServieTypes = array();
@@ -245,7 +260,10 @@ class HomeController extends Controller
              'last_name'  => $request->last_name,
              'email' => $request->email_address,
              'phone' => $request->phone_number,
-             'password' => \Hash::make($request->password)
+             'password' => \Hash::make($request->password),
+             'lat'             => $request->lat ?? null,
+             'lng'             => $request->lng ?? null,
+             'address'         => $request->addresss ?? null
          ];
          $userDances = array();
          $userServieTypes = array();
@@ -265,6 +283,7 @@ class HomeController extends Controller
 
     public function myAccount(){
         if(auth::user()->role_id == '2'){
+            $data['jobs']    = Job::where('dancer_id',auth::id())->whereNull('deleted_at')->orderBy('id','desc')->get();
             $data['gigs']    = Gig::where('user_id',auth::id())->orderBy('id','desc')->get();
             $data['dances']  = Category::where('is_active','1')->whereNull('deleted_at')->orderBy('title','asc')->get();
             $data['services'] = Service::where('is_active','1')->whereNull('deleted_at')->orderBy('title','asc')->get();
@@ -273,6 +292,7 @@ class HomeController extends Controller
             return view('frontend.teacher-account',compact('data'));
         }
         if(auth::user()->role_id == '3'){
+            $data['jobs'] = Job::where('user_id',auth::id())->whereNull('deleted_at')->orderBy('id','desc')->get();
             $data['gigs'] = Gig::where('user_id',auth::id())->orderBy('id','desc')->get();
             return view('frontend.student-account',compact('data'));
         }
@@ -527,15 +547,18 @@ class HomeController extends Controller
    public function giveRating(Request $request){
        $rating = $request->rating ?? '1';
        $review = $request->review ?? Null;
-       $Rating = new Rating;
+       $Rating = Rating::where('job_id',$request->id)->first();
+       if(empty($Rating) || is_null($Rating)){
+           $Rating = new Rating;
+       }
        $Rating->rating = $rating;
        $Rating->review = $review;
        $Rating->user_id = auth::id();
-       $Rating->teacher_id = $request->id;
+       $Rating->job_id  = $request->id;
        if($Rating->save())
-         return ['status'=>'success','message'=>'Thank you to give your review'];
+           return redirect()->back()->with('status',true)->with('message','Thank you to give your review');
        else
-         return ['status'=>'failed','message'=>'Failed to give reive'];
+           return redirect()->back()->with('status',false)->with('message','Failed to give review, Please try later');
    }
 
    public function addGigs(Request $request){
@@ -656,7 +679,7 @@ class HomeController extends Controller
             'age'        => $input['age'],
             'user_id'    => auth::id()
        ];
-       $insertId = \DB::table('requests')->insertGetId($storeData);
+       $insertId = \DB::table('jobs')->insertGetId($storeData);
        if($insertId)
            return ['status'=>'success','message'=>'Your request submitted successfully'];
         else
@@ -699,6 +722,265 @@ class HomeController extends Controller
         $message->to($data['to'])->subject($data['subject']);
       });
       return back()->with('status',true)->with('message','Thankyou to contact us, We\'ll contact you as soon posible!');
+   }
+
+   public function buyCreditPoints(){
+       $credits = \DB::table('credits')->get();
+       return view('frontend.buy-credit-points',compact('credits'));
+   }
+
+   public function checkout(Request $request){
+
+      $pack = \DB::table('credits')->where('id',$request->pack_id)->first();
+      if(empty($pack) || is_null($pack)){
+          return redirect()->back()->with('status','failed')->with('message',"Something went wrong!");
+      }
+
+       $payAmount = $pack->cost;
+       $packId    = $pack->id;
+
+       $apiContext = new \PayPal\Rest\ApiContext(
+        new \PayPal\Auth\OAuthTokenCredential(
+            'AaulWBOMRQqeljWAnxymka_BlY0p4PjmnsswMgNas8ZjwSuY1lKCzq95a3k0gwbHmpVoeN8CLwhJHIZd',     // ClientID
+            'EOBirCTnbMjRrJydFb5Eq3lbH0YprLJQ5yKPXMdV5DLdo8VYfGUVcrN7-bB4AQqZXNwqxupdCfzdFKgT'      // ClientSecret
+        ));
+
+        $payer = new \PayPal\Api\Payer();
+        $payer->setPaymentMethod('paypal');
+
+        $amount = new \PayPal\Api\Amount();
+        $amount->setTotal($payAmount);
+        $amount->setCurrency('USD');
+
+        $transaction = new \PayPal\Api\Transaction();
+        $transaction->setAmount($amount);
+
+        $redirectUrls = new \PayPal\Api\RedirectUrls();
+        $redirectUrls->setReturnUrl('http://localhost/dancenearme/payment/success?pack_id='.$packId)
+                     ->setCancelUrl('http://localhost/dancenearme/payment/failed?pack_id='.$packId);
+
+        $payment = new \PayPal\Api\Payment();
+        $payment->setIntent('sale')
+        ->setPayer($payer)
+        ->setTransactions(array($transaction))
+        ->setRedirectUrls($redirectUrls);
+         // After Step 3
+        try {
+            $payment->create($apiContext);
+            return redirect($payment->getApprovalLink());
+        }
+        catch (\PayPal\Exception\PayPalConnectionException $ex) {
+            // This will print the detailed information on the exception.
+            //REALLY HELPFUL FOR DEBUGGING
+            return redirect()->route('failed');
+        }
+   }
+
+   public function paymentSuccess(Request $request){
+
+     $pack = \DB::table('credits')->where('id',$request->pack_id)->first();
+          
+     $apiContext = new \PayPal\Rest\ApiContext(
+     new \PayPal\Auth\OAuthTokenCredential(
+        'AaulWBOMRQqeljWAnxymka_BlY0p4PjmnsswMgNas8ZjwSuY1lKCzq95a3k0gwbHmpVoeN8CLwhJHIZd',     // ClientID
+        'EOBirCTnbMjRrJydFb5Eq3lbH0YprLJQ5yKPXMdV5DLdo8VYfGUVcrN7-bB4AQqZXNwqxupdCfzdFKgT'      // ClientSecret
+     ));
+
+     $paymentId = $request->paymentId;
+     $payment   = Payment::get($paymentId, $apiContext);
+     $execution = new PaymentExecution();
+     $execution->setPayerId($request->PayerID);
+
+     $transaction = new Transaction();
+     $amount      = new Amount();
+     $details     = new Details();
+
+     $details->setShipping($pack->cost)
+       ->setTax(0)
+       ->setSubtotal($pack->cost);
+
+     $amount->setCurrency('USD');
+     $amount->setTotal($pack->cost);
+    // $amount->setDetails($details);
+     $transaction->setAmount($amount);
+     $execution->addTransaction($transaction);
+
+        try {
+            $result = $payment->execute($execution, $apiContext);
+            if($result->state == 'approved'){
+                $storeData = array(
+                    'teacher_id' => auth::id(),
+                    'pack_id'    => $pack->id,
+                    'credit'     => $pack->credit,
+                    'contact_student'    => $pack->contact_student,
+                    'cost'               => $pack->cost,
+                    'transaction_id'     => $paymentId,
+                    'transaction_status' => 'success'
+                );
+                DB::beginTransaction();
+                try{
+                    DB::table('transactions')->insertGetId($storeData);
+                    $totalCredit = auth::user()->credit_points;
+                    $totalCredit += $totalCredit + $pack->credit;
+                    DB::table('users')->where('id',auth::id())->update(['credit_points'=>$totalCredit]);
+                    DB::commit();
+                    return redirect()->route('success');
+                }catch(\Exception $e){
+                    DB::rollback();
+                    $storeData = array(
+                        'teacher_id' => auth::id(),
+                        'pack_id'    => $pack->id,
+                        'credit'     => $pack->credit,
+                        'contact_student'    => $pack->contact_student,
+                        'cost'               => $pack->cost,
+                        'transaction_id'     => $paymentId,
+                        'transaction_status' => 'failed'
+                    );
+                    DB::table('transactions')->insertGetId($storeData);
+                    return redirect()->route('failed');
+                }
+            }
+        } catch (Exception $ex) {
+            return redirect()->route('failed');
+        }
+   }
+
+   public function cancelJob(Request $request){
+       $job = Job::find($request->id);
+       $job->status = '2';
+       $job->cancel_reason = $request->cancel_reason;
+       $job->cancel_date   = date('Y-m-d H:i:s');
+       $job->cance_user_id = auth::id();
+       if($job->update())
+          return redirect()->back()->with('status',true)->with('message','Successfully cancelled job');
+       else
+          return redirect()->back()->with('status',false)->with('message','Failed to cancel job');
+   }
+
+   public function acceptJob(Request $request){
+       if(auth::user()->credit_points < 2){
+          return redirect()->back()->with('status',false)->with('message','You have insufficient credit points'); 
+       }
+    $job = Job::find($request->id);
+    $job->status = '1';
+    $job->complete_date   = date('Y-m-d H:i:s');
+    if($job->update()){
+        $previousPoints = auth::user()->credit_points;
+        $previousPoints = $previousPoints - 2;
+        \DB::table('users')->where('id',auth::id())->update(['credit_points'=>$previousPoints]);
+        return redirect()->back()->with('status',true)->with('message','Successfully accepted job');
+    }
+    else{
+        return redirect()->back()->with('status',false)->with('message','Failed to accept job'); 
+    }
+   }
+
+   public function completeJob(Request $request){
+    $job = Job::find($request->id);
+    $job->status = '3';
+    $job->accept_date   = date('Y-m-d');
+    if($job->update())
+       return redirect()->back()->with('status',true)->with('message','Successfully completed job');
+    else
+       return redirect()->back()->with('status',false)->with('message','Failed to complete job'); 
+   }
+
+   public function paymentFailed(Request $request){
+          return redirect()->route('buyCreditPoints')->with('status','failed')->with('message',"Failed to pay");
+   }
+
+   public function success(){
+    return view('frontend.payment-success');
+   }
+
+   public function failed(){
+    return view('frontend.payment-failed');
+   }
+
+   public function paywithCard(Request $request){
+         $rules = [
+           'card_number' => 'required',
+           'card_holder_name' => 'required',
+           'card_cvv'  => 'required',
+           'card_expiry_date' => 'required|date_format:m/y'
+         ];
+         $validator = \Validator::make($request->all(), $rules);
+         if($validator->fails()){
+             return array('status' => 'error' , 'msg' => 'Something went wrong', '' , 'errors' => $validator->errors());
+         }
+       $input          = $request->all();
+       $cardDate       = explode('/',$input['card_expiry_date']);
+       $cardNumber     = str_replace('-','',$input['card_number']);
+       $cardHolderName = $input['card_holder_name'];
+       $cardMonth      = $cardDate[0];
+       $cardYear       = $cardDate[1];
+       $cardCVV        = $input['card_cvv'];
+
+       $pack = \DB::table('credits')->where('id',$request->pack_id)->first();
+       if(empty($pack) || is_null($pack)){
+           return ['status'=>'failed','message'=>'Something went wrong,Please try later'];
+       }
+ 
+        $payAmount = $pack->cost;
+        $packId    = $pack->id;
+       
+       $stripe = new \Stripe\StripeClient('sk_test_51HHNUvKgSxBKk9IIxIobqet7J1nDdHdqor0WrKRE8IeoX04gW6XUS6YOO65thgWiiEuCHemyENJDfs9EsJiocP7500yBTTMMqS');
+                     
+       try{
+           $createCharege =  $stripe->tokens->create([
+              'card' => [
+                  'number'    => $cardNumber,
+                  'exp_month' => $cardMonth,
+                  'exp_year'  => $cardYear,
+                  'cvc'       => $cardCVV
+              ],
+           ]);
+       }catch(\Exception $e){
+           return ['status'=>'failed','message'=>$e->getMessage()];
+       }
+
+       try{
+           $executeCharge = $stripe->charges->create([
+                'amount' => $payAmount*100,
+                'currency' => 'EUR',
+                'source' => $createCharege['id'],
+                'description' => 'Buy Points',
+            ]);
+       }catch(\Exception $e){
+            return ['status'=>'failed','message'=>$e->getMessage()];
+       }
+
+       $storeData = array(
+            'teacher_id' => auth::id(),
+            'pack_id'    => $pack->id,
+            'credit'     => $pack->credit,
+            'contact_student'    => $pack->contact_student,
+            'cost'               => $pack->cost,
+            'transaction_id'     => $executeCharge['id'],
+            'transaction_status' => 'success'
+       );
+       DB::beginTransaction();
+        try{
+            DB::table('transactions')->insertGetId($storeData);
+            $totalCredit = auth::user()->credit_points;
+            $totalCredit += $totalCredit + $pack->credit;
+            DB::table('users')->where('id',auth::id())->update(['credit_points'=>$totalCredit]);
+            DB::commit();
+            return ['status'=>'success','message'=>'Transaction successfully'];
+        }catch(\Exception $e){
+            DB::rollback();
+            $storeData = array(
+                'teacher_id' => auth::id(),
+                'pack_id'    => $pack->id,
+                'credit'     => $pack->credit,
+                'contact_student'    => $pack->contact_student,
+                'cost'               => $pack->cost,
+                'transaction_id'     => $paymentId,
+                'transaction_status' => 'failed'
+            );
+            DB::table('transactions')->insertGetId($storeData);
+            return ['status'=>'failed','message'=>'Transaction failed'];
+        }
    }
 
 }

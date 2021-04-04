@@ -53,7 +53,8 @@ class ServiceController extends Controller
          }
         $inserData = [
             'title'   => $input['title'],
-            'user_id' => auth::id()
+            'user_id' => auth::id(),
+            'description' => $input['description']
         ];
         if($fileName){
             $inserData['image'] = $fileName;
@@ -120,7 +121,8 @@ class ServiceController extends Controller
          }
         
         $updateData = [
-            'title' => $input['title']
+            'title' => $input['title'],
+            'description' => $input['description']
         ];
 
         if($request->is_active)
@@ -140,9 +142,9 @@ class ServiceController extends Controller
                 $previousImage = end($arr);
             }
             DB::table('services')->where('id',$id)->update($updateData);
+            DB::commit();
             if($fileName)
                \File::delete('public/images/service/'.$previousImage);
-            DB::commit();
             return redirect()->route('backend.index.service')->with('status',true)->with('message',__('Successfully updated service'));
         }catch(\Exception $e){
             DB::rollback();

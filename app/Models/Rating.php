@@ -16,8 +16,8 @@ class Rating extends Model
         return $this->hasOne('App\User','id','user_id');
     }
 
-    public function teacher(){
-        return $this->hasOne('App\User','id','teacher_id');
+    public function job(){
+        return $this->hasOne('App\Models\Job','id','job_id');
     }
 
 }

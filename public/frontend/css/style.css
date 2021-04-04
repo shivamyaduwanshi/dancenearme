@@ -3609,3 +3609,15 @@ input[type="file"]{
 .invalid-text{
   color:red;
 }
+
+.btn-credit-point{
+  background: red !important;
+  border-color: red !important;
+  color: #fff !important;
+  border-radius: 10px;
+  padding: 4px;
+}
+/******************************/
+.buy-credit-page{
+  padding: 115px 0 30px !important;
+}

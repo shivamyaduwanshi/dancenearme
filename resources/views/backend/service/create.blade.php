@@ -24,6 +24,14 @@
                                 </span>
                                 @enderror
                             </div>
+                            <div class="form-group">
+                                <textarea class="form-control" placeholder="Description" name="description">{{old('description')}}</textarea>
+                                @error('description')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror
+                            </div>
                             <div class="img-preview">
                                 <img class="image-preview" src="{{asset('public/images/system/image-not-available.png')}}" width="100%" height="200px"/>
                              </div>

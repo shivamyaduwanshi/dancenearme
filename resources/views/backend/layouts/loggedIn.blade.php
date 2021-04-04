@@ -93,6 +93,9 @@
                                 <a href="{{route('backend.index.service')}}"><i class="fa fa-stack-overflow"></i> {{__('Services')}} </a>
                             </li>
                             <li>
+                                <a href="{{route('backend.index.metakey')}}"><i class="fa fa-cog"></i> {{__('Meta Key')}} </a>
+                            </li>
+                            <li>
                                 <a href="{{route('backend.index.config')}}"><i class="fa fa-cog"></i> {{__('Config')}} </a>
                             </li>
                         </ul>

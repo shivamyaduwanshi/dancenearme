@@ -64,7 +64,7 @@ class User extends Authenticatable
     }
 
     public function avgRating(){
-        $rating = \App\Models\Rating::where('teacher_id',$this->id)->avg('rating');
+        $rating   = \DB::table('rating_reviews')->select('rating_reviews.*')->join('jobs','rating_reviews.job_id','=','jobs.id')->where('jobs.dancer_id',$this->id)->avg('rating');
         return $rating ? number_format($rating,1) : '0.0';
      }
 

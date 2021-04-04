@@ -65,6 +65,7 @@ Route::name('backend.')->group(function () {
     Route::put('active/dancer', 'VendorController@activeAccount')->name('active.vendor');
     Route::delete('delete/dancer', 'VendorController@destroy')->name('delete.vendor');
     Route::put('/deactive/dancer', 'VendorController@deactiveAccount')->name('deactive.vendor');
+   
     /**
      * User Route's
      */
@@ -79,4 +80,13 @@ Route::name('backend.')->group(function () {
     Route::get('config','HomeController@config')->name('index.config');
     Route::get('show/config/{id}','HomeController@getConfig')->name('show.config');
     Route::put('update/config/{id}','HomeController@updateConfig')->name('update.config');
+
+    Route::get('meta/keys','MetaKeyController@index')->name('index.metakey');
+    Route::get('create/meta/key','MetaKeyController@create')->name('create.metakey');
+    Route::post('store/meta/key','MetaKeyController@store')->name('store.metakey');
+    Route::get('show/meta/key/{id}','MetaKeyController@show')->name('show.metakey');
+    Route::get('edit/meta/key/{id}','MetaKeyController@edit')->name('edit.metakey');
+    Route::put('update/meta/key/{id}','MetaKeyController@update')->name('update.metakey');
+    Route::delete('delete/meta/key','MetaKeyController@destroy')->name('delete.metakey');
+
 });

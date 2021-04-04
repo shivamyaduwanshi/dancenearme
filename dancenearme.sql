@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 21, 2021 at 07:51 PM
+-- Generation Time: Apr 04, 2021 at 05:42 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 7.3.25
 
@@ -117,6 +117,31 @@ INSERT INTO `configs` (`id`, `key`, `value`, `type`, `created_at`, `updated_at`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `credits`
+--
+
+CREATE TABLE `credits` (
+  `id` int(11) NOT NULL,
+  `credit` int(11) NOT NULL,
+  `contact_student` int(11) NOT NULL,
+  `cost` decimal(8,2) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `credits`
+--
+
+INSERT INTO `credits` (`id`, `credit`, `contact_student`, `cost`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 20, 10, '23.32', '2021-03-26 22:07:05', NULL, NULL),
+(2, 30, 15, '34.99', '2021-03-26 22:07:17', NULL, NULL),
+(3, 40, 20, '46.65', '2021-03-26 22:07:17', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `gigs`
 --
 
@@ -143,6 +168,67 @@ INSERT INTO `gigs` (`id`, `user_id`, `title`, `price`, `description`, `image`, `
 (19, 48, 'Gig Title 4', 400.00, 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generato', '2W94lvFKju.1616325972.jfif', '2021-03-21 11:26:12', '2021-03-21 11:26:12', NULL),
 (20, 48, 'Gig Title 5', 500.00, 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generato', 'YJrXNpjY83.1616325992.jfif', '2021-03-21 11:26:32', '2021-03-21 11:26:32', NULL),
 (21, 48, 'Gig Title 5', 500.00, 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generato', 'zSc3G15Xbc.1616325992.jfif', '2021-03-21 11:26:32', '2021-03-21 11:26:32', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `jobs`
+--
+
+CREATE TABLE `jobs` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `dancer_id` int(11) DEFAULT NULL,
+  `service_id` int(11) DEFAULT NULL,
+  `dance_id` int(11) DEFAULT NULL,
+  `age` varchar(50) DEFAULT NULL,
+  `experience` varchar(50) DEFAULT NULL,
+  `instructor` text DEFAULT NULL,
+  `zip_code` varchar(10) DEFAULT NULL,
+  `status` enum('0','1','2','3') NOT NULL DEFAULT '0',
+  `accept_date` datetime DEFAULT NULL,
+  `complete_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `cancel_date` datetime DEFAULT NULL,
+  `cancel_reason` longtext DEFAULT NULL,
+  `cance_user_id` int(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `jobs`
+--
+
+INSERT INTO `jobs` (`id`, `user_id`, `dancer_id`, `service_id`, `dance_id`, `age`, `experience`, `instructor`, `zip_code`, `status`, `accept_date`, `complete_date`, `cancel_date`, `cancel_reason`, `cance_user_id`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(7, 47, 48, 3, 2, '6 or yunger', 'No experience', 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.', '452010', '0', '2021-03-28 00:00:00', '2021-03-28 19:07:11', '2021-03-28 00:00:00', 'cancel job', 47, '2021-03-28 17:31:47', '2021-03-28 19:08:32', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `meta_keys`
+--
+
+CREATE TABLE `meta_keys` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `key` varchar(250) NOT NULL,
+  `value` text NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `meta_keys`
+--
+
+INSERT INTO `meta_keys` (`id`, `key`, `value`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 'name', 'dancenearme', '2021-03-22 22:16:28', '2021-03-22 17:36:19', NULL),
+(3, 'description', 'best online dancer near you', '2021-03-22 23:06:57', NULL, NULL),
+(4, 'charset', 'UTF-8', '2021-03-22 23:09:31', NULL, NULL),
+(5, 'keywords', 'dancenearme', '2021-03-22 23:09:51', NULL, NULL),
+(6, 'author', 'Dance near me', '2021-03-22 23:10:08', '2021-03-22 17:46:02', NULL),
+(7, 'url', 'http://www.codezens.com/dancenearme', '2021-03-22 23:10:35', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -236,7 +322,9 @@ INSERT INTO `password_resets` (`email`, `token`, `created_at`) VALUES
 CREATE TABLE `rating_reviews` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
-  `teacher_id` bigint(20) UNSIGNED NOT NULL,
+  `teacher_id` int(11) DEFAULT NULL,
+  `job_id` int(11) DEFAULT NULL,
+  `gig_id` int(11) DEFAULT NULL,
   `rating` enum('1','2','3','4','5') NOT NULL DEFAULT '1',
   `review` text CHARACTER SET utf8 COLLATE utf8_bin DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -248,31 +336,9 @@ CREATE TABLE `rating_reviews` (
 -- Dumping data for table `rating_reviews`
 --
 
-INSERT INTO `rating_reviews` (`id`, `user_id`, `teacher_id`, `rating`, `review`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(10, 47, 48, '4', 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generato', '2021-03-21 11:34:17', '2021-03-21 11:34:17', NULL),
-(11, 47, 48, '5', 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book.', '2021-03-21 16:24:59', '2021-03-21 16:24:59', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `requests`
---
-
-CREATE TABLE `requests` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `dancer_id` int(11) DEFAULT NULL,
-  `service_id` int(11) DEFAULT NULL,
-  `dance_id` int(11) DEFAULT NULL,
-  `age` varchar(50) DEFAULT NULL,
-  `experience` varchar(50) DEFAULT NULL,
-  `instructor` text DEFAULT NULL,
-  `zip_code` varchar(10) DEFAULT NULL,
-  `status` enum('0','1','2','3') NOT NULL DEFAULT '0',
-  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_at` datetime DEFAULT NULL,
-  `deleted_at` datetime DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+INSERT INTO `rating_reviews` (`id`, `user_id`, `teacher_id`, `job_id`, `gig_id`, `rating`, `review`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(16, 47, NULL, 7, NULL, '3', 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.', '2021-03-28 17:57:01', '2021-03-28 17:57:01', NULL),
+(17, 48, NULL, 48, NULL, '5', 'lorem ipsum', '2021-04-01 18:11:45', '2021-04-01 18:11:45', NULL);
 
 -- --------------------------------------------------------
 
@@ -284,6 +350,7 @@ CREATE TABLE `services` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
+  `description` longtext DEFAULT NULL,
   `is_active` enum('0','1') DEFAULT '1',
   `image` varchar(250) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
@@ -295,13 +362,13 @@ CREATE TABLE `services` (
 -- Dumping data for table `services`
 --
 
-INSERT INTO `services` (`id`, `user_id`, `title`, `is_active`, `image`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 24, 'Acting', '1', NULL, '2021-03-07 22:14:13', NULL, NULL),
-(2, 24, 'Film Direction', '1', NULL, '2021-03-07 22:15:27', NULL, NULL),
-(3, 24, 'Film Acting', '1', NULL, '2021-03-07 22:15:27', NULL, NULL),
-(4, 24, 'Film And TV Acting', '1', NULL, '2021-03-07 22:15:27', NULL, NULL),
-(5, 24, 'Film Production', '1', NULL, '2021-03-07 22:15:27', NULL, NULL),
-(7, 1, 'title 3', '1', 'GO4Pqtbjmr.1616352273.jpg', '2021-03-22 00:05:00', '2021-03-21 18:39:01', NULL);
+INSERT INTO `services` (`id`, `user_id`, `title`, `description`, `is_active`, `image`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, 24, 'Acting', 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.', '1', NULL, '2021-03-07 22:14:13', NULL, NULL),
+(2, 24, 'Film Direction', 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.', '1', NULL, '2021-03-07 22:15:27', NULL, NULL),
+(3, 24, 'Film Acting', 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.', '1', NULL, '2021-03-07 22:15:27', NULL, NULL),
+(4, 24, 'Film And TV Acting', 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.', '1', NULL, '2021-03-07 22:15:27', NULL, NULL),
+(5, 24, 'Film Production', 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.', '1', NULL, '2021-03-07 22:15:27', NULL, NULL),
+(7, 1, 'title 3', 'Reference site about Lorem Ipsum, giving information on its origins, as well as a random Lipsum generator.', '1', 'GO4Pqtbjmr.1616352273.jpg', '2021-03-22 00:05:00', '2021-03-21 18:39:01', NULL);
 
 -- --------------------------------------------------------
 
@@ -326,6 +393,50 @@ INSERT INTO `teacher_services` (`id`, `teacher_id`, `service_id`, `created_at`, 
 (3, 48, 4, '2021-03-21 23:27:49', NULL, NULL),
 (4, 48, 2, '2021-03-21 23:27:49', NULL, NULL),
 (5, 48, 5, '2021-03-21 23:27:49', NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `transactions`
+--
+
+CREATE TABLE `transactions` (
+  `id` int(11) NOT NULL,
+  `teacher_id` int(11) NOT NULL,
+  `pack_id` int(11) NOT NULL,
+  `credit` int(11) NOT NULL,
+  `contact_student` int(11) NOT NULL,
+  `cost` double(8,2) NOT NULL,
+  `transaction_id` varchar(250) DEFAULT NULL,
+  `transaction_amount` double(8,2) DEFAULT NULL,
+  `transaction_status` enum('pending','success','failure','') NOT NULL DEFAULT 'pending',
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `transactions`
+--
+
+INSERT INTO `transactions` (`id`, `teacher_id`, `pack_id`, `credit`, `contact_student`, `cost`, `transaction_id`, `transaction_amount`, `transaction_status`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(8, 48, 2, 30, 15, 34.99, 'PAYID-MBPQEMI1A020750A94495300', NULL, 'success', '2021-03-27 15:30:51', NULL, NULL),
+(12, 48, 1, 20, 10, 23.32, 'PAYID-MBPQMEA7TC14314EP630645A', NULL, 'success', '2021-03-27 15:49:03', NULL, NULL),
+(13, 48, 2, 30, 15, 34.99, 'PAYID-MBPQNOA1WS3240952137571X', NULL, 'success', '2021-03-27 15:50:13', NULL, NULL),
+(14, 48, 1, 20, 10, 23.32, 'PAYID-MBPRGPI6VP82204SS168234S', NULL, 'success', '2021-03-27 16:43:41', NULL, NULL),
+(15, 48, 3, 40, 20, 46.65, 'PAYID-MBPRHFY9KB78405HK3836617', NULL, 'success', '2021-03-27 16:45:25', NULL, NULL),
+(16, 48, 1, 20, 10, 23.32, 'PAYID-MBPRLNA6GS469825Y3954243', NULL, 'success', '2021-03-27 16:54:12', NULL, NULL),
+(17, 48, 1, 20, 10, 23.32, 'PAYID-MBPRR3I63S77986710208052', NULL, 'success', '2021-03-27 18:34:19', NULL, NULL),
+(18, 48, 1, 20, 10, 23.32, 'PAYID-MBQN2XY1YW91155KP9001134', NULL, 'success', '2021-03-29 01:18:35', NULL, NULL),
+(19, 48, 1, 20, 10, 23.32, 'ch_1Ib8TxKgSxBKk9IIaIWXiImj', NULL, 'success', '2021-03-31 23:39:42', NULL, NULL),
+(20, 48, 1, 20, 10, 23.32, 'ch_1Ib8V3KgSxBKk9IIlYbuTJPi', NULL, 'success', '2021-03-31 23:40:49', NULL, NULL),
+(21, 48, 1, 20, 10, 23.32, 'ch_1Ib8cIKgSxBKk9IIODDmt9OU', NULL, 'success', '2021-03-31 23:48:19', NULL, NULL),
+(22, 48, 1, 20, 10, 23.32, 'ch_1Ib8ccKgSxBKk9IIVHZ9LoSp', NULL, 'success', '2021-03-31 23:48:39', NULL, NULL),
+(23, 48, 1, 20, 10, 23.32, 'ch_1Ib8eWKgSxBKk9IIJA0MbYBJ', NULL, 'success', '2021-03-31 23:50:36', NULL, NULL),
+(24, 48, 1, 20, 10, 23.32, 'ch_1Ib8gYKgSxBKk9II6rez9bIT', NULL, 'success', '2021-03-31 23:52:44', NULL, NULL),
+(25, 48, 1, 20, 10, 23.32, 'ch_1Ib8hKKgSxBKk9II7y8KaIIs', NULL, 'success', '2021-03-31 23:53:31', NULL, NULL),
+(26, 48, 1, 20, 10, 23.32, 'ch_1Ib8irKgSxBKk9IIGZJlPYDC', NULL, 'success', '2021-03-31 23:55:06', NULL, NULL),
+(27, 48, 1, 20, 10, 23.32, 'ch_1IbUhPKgSxBKk9IIutpJ5l8i', NULL, 'success', '2021-04-01 23:23:05', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -365,6 +476,7 @@ CREATE TABLE `users` (
   `lat` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `lng` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_featured` enum('0','1') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '1',
+  `credit_points` decimal(8,2) NOT NULL DEFAULT 0.00,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT NULL,
   `deleted_at` datetime DEFAULT NULL
@@ -374,10 +486,11 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `role_id`, `first_name`, `last_name`, `name`, `email`, `phone`, `profile_image`, `email_verified_at`, `phone_verified_at`, `location_verified_at`, `password`, `city`, `address`, `zip_code`, `device_type`, `device_token`, `is_active`, `bio`, `social_id`, `login_type`, `remember_token`, `is_notify`, `deleted_reason`, `deactive_reason`, `travel_distance`, `business_info`, `country`, `lat`, `lng`, `is_featured`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, '1', 'Dance', 'Nearme', 'Dance Near Me', 'admin@gmail.com', '999999999', NULL, NULL, NULL, NULL, '$2y$10$BoVK0DNAtHkUAusrDPnLoeCJ0AhvtzHFJShAHc8cdcmVGxBn.hao2', 'Indore', NULL, 452010, '0', NULL, '1', 'Lorem ipsum', '', NULL, 'IwEvo1v5aFUhaXVnjYOQf2a8d2GeUjeto1JaJ5eVwLJWxAIYSc688YY7yebQ', '1', NULL, NULL, NULL, '', 'India', NULL, NULL, '1', NULL, '2021-03-05 12:51:24', NULL),
-(47, '3', 'Rahul', 'Yadav', 'Rahul Yadav', 'rahul@gmail.com', '8959070299', 'abCFfF5m99.1616324937.jfif', NULL, NULL, NULL, '$2y$10$AN.fpVMhrEnbO76HeVoDN.IloI9QIWHvwCGSJvEwiVSQveh9i64Re', NULL, NULL, NULL, '0', NULL, '1', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', '2021-03-21 11:04:43', NULL, NULL),
-(48, '2', 'Shivam', 'Yadav', 'Shivam Yadav', 'shivam@gmail.com', '4395345343', 'IBwnaeqzrb.1616325165.jpg', NULL, NULL, NULL, '$2y$10$OM8y4Dww/RN3Ysfr8vSrgOyJcI2Wea/DfsMO.a0uWHlOvpBj.lPkS', NULL, NULL, NULL, '0', NULL, '1', 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book.', NULL, NULL, 'QmDbyA5K1grXn1skdOl8gLEb3wBWKS8EX4SoWxHWlzGynTZzCra8SbR3UGo6', '1', NULL, NULL, NULL, 'My Profile\r\n\r\nShivam Yadav\r\n     0.0\r\n 5 hours from now in bussiness\r\n\r\n,\r\n\r\nCredentials\r\n Location Verified   Mail Verified   Number Verified \r\nAbout\r\n\r\nLorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book.', NULL, NULL, NULL, '1', '2021-03-21 11:10:06', '2021-03-21 05:47:13', NULL);
+INSERT INTO `users` (`id`, `role_id`, `first_name`, `last_name`, `name`, `email`, `phone`, `profile_image`, `email_verified_at`, `phone_verified_at`, `location_verified_at`, `password`, `city`, `address`, `zip_code`, `device_type`, `device_token`, `is_active`, `bio`, `social_id`, `login_type`, `remember_token`, `is_notify`, `deleted_reason`, `deactive_reason`, `travel_distance`, `business_info`, `country`, `lat`, `lng`, `is_featured`, `credit_points`, `created_at`, `updated_at`, `deleted_at`) VALUES
+(1, '1', 'Dance', 'Nearme', 'Dance Near Me', 'admin@gmail.com', '999999999', NULL, NULL, NULL, NULL, '$2y$10$BoVK0DNAtHkUAusrDPnLoeCJ0AhvtzHFJShAHc8cdcmVGxBn.hao2', 'Indore', NULL, 452010, '0', NULL, '1', 'Lorem ipsum', '', NULL, 'FQktH83x3ekJIAGvwXvQKFxtAyAyYDZBtmLqdPYmQu9Sz9k6L9fCzBlm0IxR', '1', NULL, NULL, NULL, '', 'India', NULL, NULL, '1', '0.00', NULL, '2021-03-05 12:51:24', NULL),
+(47, '3', 'Rahul', 'Yadav', 'Rahul Yadav', 'rahul@gmail.com', '8959070299', 'abCFfF5m99.1616324937.jfif', NULL, NULL, NULL, '$2y$10$AN.fpVMhrEnbO76HeVoDN.IloI9QIWHvwCGSJvEwiVSQveh9i64Re', NULL, NULL, NULL, '0', NULL, '1', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '1', '0.00', '2021-03-21 11:04:43', NULL, NULL),
+(48, '2', 'Shivam', 'Yadav', 'Shivam Yadav', 'shivam@gmail.com', '4395345343', 'IBwnaeqzrb.1616325165.jpg', NULL, NULL, NULL, '$2y$10$OM8y4Dww/RN3Ysfr8vSrgOyJcI2Wea/DfsMO.a0uWHlOvpBj.lPkS', NULL, NULL, NULL, '0', NULL, '1', 'Lorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book.', NULL, NULL, 'cofnOiI0W8lgMVhMN5t1Rk7tA11xO6pKQf2DEF9LON8GSi2jByzLzM1xLR4e', '1', NULL, NULL, NULL, 'My Profile\r\n\r\nShivam Yadav\r\n     0.0\r\n 5 hours from now in bussiness\r\n\r\n,\r\n\r\nCredentials\r\n Location Verified   Mail Verified   Number Verified \r\nAbout\r\n\r\nLorem ipsum, or lipsum as it is sometimes known, is dummy text used in laying out print, graphic or web designs. The passage is attributed to an unknown typesetter in the 15th century who is thought to have scrambled parts of Cicero\'s De Finibus Bonorum et Malorum for use in a type specimen book.', NULL, NULL, NULL, '1', '20460.00', '2021-03-21 11:10:06', '2021-03-21 05:47:13', NULL),
+(49, '2', 'krishna', 'Yadav', 'krishna Yadav', 'krishnayaduwanshi7@gmail.com', '5435345435', NULL, NULL, NULL, NULL, '$2y$10$9RVv9OFGMmtqcKvAa2ANwel5vaRgGiJ8NKwlXfuHXmNXPxtzOUJFy', NULL, NULL, NULL, '0', NULL, '1', NULL, NULL, NULL, NULL, '1', NULL, NULL, NULL, NULL, NULL, '22.9734229', '78.6568942', '1', '0.00', '2021-03-27 15:34:15', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -401,7 +514,8 @@ CREATE TABLE `user_dances` (
 INSERT INTO `user_dances` (`id`, `user_id`, `dance_id`, `created_at`, `update_at`, `deleted_at`) VALUES
 (20, 48, 2, '2021-03-21 23:06:42', NULL, NULL),
 (21, 48, 3, '2021-03-21 23:06:42', NULL, NULL),
-(22, 48, 1, '2021-03-21 23:06:42', NULL, NULL);
+(22, 48, 1, '2021-03-21 23:06:42', NULL, NULL),
+(23, 49, 2, '2021-03-27 21:04:15', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -492,7 +606,8 @@ INSERT INTO `user_service_types` (`id`, `user_id`, `service_type`, `created_at`,
 (16, 44, 2, '2021-03-07 15:21:29', NULL, NULL),
 (17, 48, 1, '2021-03-21 16:40:06', NULL, NULL),
 (18, 48, 2, '2021-03-21 16:40:06', NULL, NULL),
-(19, 48, 3, '2021-03-21 16:40:06', NULL, NULL);
+(19, 48, 3, '2021-03-21 16:40:06', NULL, NULL),
+(20, 49, 2, '2021-03-27 21:04:15', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -543,9 +658,27 @@ ALTER TABLE `configs`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `credits`
+--
+ALTER TABLE `credits`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `gigs`
 --
 ALTER TABLE `gigs`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `jobs`
+--
+ALTER TABLE `jobs`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `meta_keys`
+--
+ALTER TABLE `meta_keys`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -573,12 +706,6 @@ ALTER TABLE `rating_reviews`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `requests`
---
-ALTER TABLE `requests`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `services`
 --
 ALTER TABLE `services`
@@ -588,6 +715,12 @@ ALTER TABLE `services`
 -- Indexes for table `teacher_services`
 --
 ALTER TABLE `teacher_services`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `transactions`
+--
+ALTER TABLE `transactions`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -649,10 +782,28 @@ ALTER TABLE `configs`
   MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
+-- AUTO_INCREMENT for table `credits`
+--
+ALTER TABLE `credits`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `gigs`
 --
 ALTER TABLE `gigs`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+
+--
+-- AUTO_INCREMENT for table `jobs`
+--
+ALTER TABLE `jobs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `meta_keys`
+--
+ALTER TABLE `meta_keys`
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `migrations`
@@ -670,13 +821,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `rating_reviews`
 --
 ALTER TABLE `rating_reviews`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
-
---
--- AUTO_INCREMENT for table `requests`
---
-ALTER TABLE `requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `services`
@@ -691,16 +836,22 @@ ALTER TABLE `teacher_services`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `transactions`
+--
+ALTER TABLE `transactions`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `user_dances`
 --
 ALTER TABLE `user_dances`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `user_portfolios`
@@ -718,7 +869,7 @@ ALTER TABLE `user_question_answers`
 -- AUTO_INCREMENT for table `user_service_types`
 --
 ALTER TABLE `user_service_types`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `user_social_links`
